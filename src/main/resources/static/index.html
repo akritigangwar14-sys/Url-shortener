@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 15px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>URL Shortener</h2>
+    <input type="text" id="urlInput" placeholder="Paste long URL here..." />
+    <button onclick="shorten()">Shorten</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    function shorten() {
+        const longUrl = document.getElementById("urlInput").value;
+        if (!longUrl) {
+            alert("Please enter a URL!");
+            return;
+        }
+
+        fetch('/shorten?originalUrl=' + encodeURIComponent(longUrl))
+            .then(response => response.text())
+            .then(data => {
+                // Extract key from response string "Shortened URL key: XXXXXX"
+                const key = data.split(": ")[1];
+                const shortUrl = window.location.origin + '/' + key;
+                document.getElementById("result").innerHTML =
+                    `<p>Short URL:</p><a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
+            })
+            .catch(error => {
+                document.getElementById("result").innerText = "Error shortening URL";
+            });
+    }
+</script>
+
+</body>
+</html>
